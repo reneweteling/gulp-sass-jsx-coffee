@@ -1,0 +1,41 @@
+{
+  "name": "sweet-gulp-setup",
+  "version": "0.0.1",
+  "description": "coffee react sass gulp with server",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "browserify": "^12.0.1",
+    "backbone": "^1.2.3",
+    "coffee-reactify": "^4.0.0",
+    "gulp": "^3.9.0",
+    "gulp-cjsx": "^3.0.0",
+    "gulp-clean": "^0.3.1",
+    "gulp-run-sequence": "^0.3.2",
+    "gulp-sass": "^2.1.0",
+    "gulp-server-livereload": "^1.5.4",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-watch": "^4.3.5",
+    "jquery": "^2.1.4",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "devDependencies": {
+    "browserify": "^12.0.1",
+    "coffee-reactify": "^4.0.0",
+    "coffee-script": "^1.10.0",
+    "gulp": "^3.9.0",
+    "gulp-clean": "^0.3.1",
+    "gulp-manifest": "^0.1.1",
+    "gulp-notify": "^2.2.0",
+    "gulp-run-sequence": "^0.3.2",
+    "gulp-sass": "^2.1.0",
+    "gulp-server-livereload": "^1.5.4",
+    "gulp-sourcemaps": "^1.6.0",
+    "underscore": "^1.8.3",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rene Weteling (rene@weteling.com)",
+  "license": "ISC"
+}
