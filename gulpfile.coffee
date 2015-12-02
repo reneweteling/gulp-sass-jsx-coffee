@@ -1,21 +1,35 @@
-browserify  = require 'browserify'
-clean       = require 'gulp-clean'
-gulp        = require 'gulp'
-manifest    = require 'gulp-manifest'
-reactify    = require 'coffee-reactify'
-sass        = require 'gulp-sass'
-sequence    = require 'gulp-run-sequence'
-server      = require 'gulp-server-livereload'
-source      = require 'vinyl-source-stream'
-sourcemaps  = require 'gulp-sourcemaps'
+gulp           = require 'gulp'
+clean          = require 'gulp-clean'
+browserify     = require 'browserify'
+browserifyInc  = require 'browserify-incremental'
+sass           = require 'gulp-sass'
+reactify       = require 'coffee-reactify'
+source         = require 'vinyl-source-stream'
+sourcemaps     = require 'gulp-sourcemaps'
+webserver      = require 'gulp-webserver'
+sequence       = require 'gulp-run-sequence'
+manifest       = require 'gulp-manifest'
+bower          = require 'gulp-bower'
+
+config =
+  sassPath: './src/style'
+  bowerDir: './bower_components'
 
 gulp.task 'default', (cb) ->
-  sequence 'clean', ['copy', 'sass', 'script'], 'manifest', 'watch', 'webserver', cb
+  sequence 'clean', 'bower', ['copy', 'sass', 'script'], 'manifest', 'watch', 'webserver', cb
+
+gulp.task 'bower', ->
+  bower()
+  .pipe(gulp.dest(config.bowerDir))
 
 gulp.task 'script', ->
-  b = browserify()
+  b = browserify {
+    fullPaths: true,
+    cache: {}
+  }
+  browserifyInc(b, {cacheFile: './browserify-cache.json'})
   b.transform(reactify)
-  b.add('./src/js/app.coffee')
+  b.add('./src/js/app.cjsx')
 
   b.bundle()
     .on 'error', (err) -> 
@@ -34,7 +48,12 @@ gulp.task 'clean', ->
 gulp.task 'sass', ->
   gulp.src './src/style/app.sass'
     .pipe sourcemaps.init()
-      .pipe sass().on('error', sass.logError)
+      .pipe sass(
+        loadPath: [
+          config.sassPath
+          config.bowerDir + '/bootstrap-sass-official/assets/stylesheets'
+        ]
+      ).on('error', sass.logError)
     .pipe sourcemaps.write('./maps')
     .pipe gulp.dest('./build/assets')
 
@@ -48,11 +67,14 @@ gulp.task 'manifest', ->
 
 gulp.task 'webserver', ->
   gulp.src('./build')
-    .pipe server(
-      livereload: true
-      open: true)
-  
+    .pipe(
+      webserver(
+        fallback: 'index.html'
+        livereload: true
+      )
+    )
+
 gulp.task 'watch', ->
-  gulp.watch ['./src/**/*.sass'],                                         [ 'sass' ]
-  gulp.watch ['./src/**/*.cjsx', './src/**/*.coffee', './src/**/*.js'],   [ 'script' ]
-  gulp.watch ['./src/*.html', './src/images/**'], ['copy']
+  gulp.watch ['./src/**/*.sass'],                 [ 'sass' ]
+  gulp.watch ['./src/**/*.{cjsx, coffee, js}'],   [ 'script' ]
+  gulp.watch ['./src/*.html', './src/images/**'], [ 'copy' ]
